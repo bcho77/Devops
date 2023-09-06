@@ -1,23 +1,34 @@
-pipeline {
+pipeline{
     agent any
+    environment{
+        DOCKERHUB_CREDENTIALS=credentials('vaninoel')
+    }
     stages {
-        stage('Build') {
+        stage(Checkout){
             steps {
-                echo 'Building...'
-                // Add your build steps here
+                checkout scm
+                git 'https://github.com/bcho77/Devops.git'
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                // Add your test steps here
+        stage('Build image'){
+            steps{
+                sh' sudo docker build -t vaninoel/node:$BUILD_NUMBER .'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                // Add your deploy steps here
+        stage('login to dockerhub'){
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
+        }
+        stage ('push image'){
+            steps{
+                sh' sudo docker push vaninoel/node:$BUILD_NUMBER'
+            }
+        }
+    }
+    post{
+        always{
+            sh 'sudo docker logout'
         }
     }
 }
