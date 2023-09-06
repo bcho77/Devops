@@ -24,7 +24,7 @@ pipeline{
             steps{
                 sh '''
                 sudo docker images 
-                sudo docker push vaninoel/pipeline:$BUILD_NUMBER
+                sudo docker push vaninoel/pipepline:$BUILD_NUMBER
                 '''
             }
         }
