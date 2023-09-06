@@ -22,7 +22,10 @@ pipeline{
         }
         stage('Push to dockerhub') {
             steps{
-                sh 'sudo docker push vaninoel/pipeline:$BUILD_NUMBER'
+                sh '''
+                sudo docker images 
+                sudo docker push vaninoel/pipeline:$BUILD_NUMBER
+                '''
             }
         }
         
