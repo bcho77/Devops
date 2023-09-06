@@ -28,6 +28,19 @@ pipeline{
                 '''
             }
         }
+         stage('Pull image') {
+            steps{
+                sh 'sudo docker pull vaninoel/pipepline:14' 
+            }
+         }
+        stage('Run Image') {
+            steps{
+                sh '''
+                 sudo sudo docker run -d -p 8082:80  --name mypipeline1 vaninoel/pipepline:14
+                 sudo docker ps -a 
+             '''
+            }
+        }      
         
     }
     post{
