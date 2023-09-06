@@ -1,23 +1,35 @@
-pipeline {
+pipeline{
     agent any
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building...'
-                // Add your build steps here
+    environment{
+        DOCKERHUB_CREDENTIALS=credentials('vaninoel')
+    }
+    stages{
+        stage(checkout){
+            steps{
+
+               git'https://github.com/bcho77/pipepline'
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                // Add your test steps here
+        stage('Build image') {
+            steps{
+                sh 'sudo docker build -t vaninoel/pipepline:$BUILD_NUMBER .'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                // Add your deploy steps here
+        stage('Login to dockerhub') {
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
+        }
+        stage('Push to dockerhub') {
+            steps{
+                sh 'sudo docker push vaninoel/pipeline:$BUILD_NUMBER'
+            }
+        }
+        
+    }
+    post{
+        always{
+            sh 'sudo docker logout'
         }
     }
 }
